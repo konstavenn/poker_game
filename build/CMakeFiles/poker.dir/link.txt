@@ -1,1 +1,0 @@
-/usr/bin/clang++ -g -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX11.3.sdk -Wl,-search_paths_first -Wl,-headerpad_max_install_names CMakeFiles/poker.dir/main.cpp.o CMakeFiles/poker.dir/game.cpp.o CMakeFiles/poker.dir/player.cpp.o CMakeFiles/poker.dir/deck.cpp.o CMakeFiles/poker.dir/pair.cpp.o CMakeFiles/poker.dir/card.cpp.o -o poker 

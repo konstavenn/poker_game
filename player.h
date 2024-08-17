@@ -1,13 +1,14 @@
 #ifndef poker_player
 #define poker_player
 
-#include "pair.h"
+#include "hand.h"
 
 class player_t {
     public:
-        player_t() {}
+        player_t(std::string player_name) {name = player_name;}
 
-        pair_t hand;
+        hand_t hand;
+        std::string name;
 
 };
 

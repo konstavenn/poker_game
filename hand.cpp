@@ -1,33 +1,31 @@
 #include <iostream>
 
 #include "card.h"
-#include "pair.h"
+#include "hand.h"
 
 
 
 
 
-void pair_t::fill_pair(card_t first, card_t second) {
-    //card_pair = std::make_pair(first, second); 
+void hand_t::fill_hand(card_t first, card_t second) {
     first_card = first;
     second_card = second;
-    isset = true;
+    hand_not_empty = true;
 }
-void pair_t::empty_pair() {
-    //card_pair = {};
+void hand_t::empty_hand() {
     card_t first_card;
     card_t second_card;
-    isset = false;
+    hand_not_empty = false;
 }
-void pair_t::print_pair() {
-    if (!isset) {
-        std::cout << "pair is empty.\n";
+void hand_t::print_hand() {
+    if (!hand_not_empty) {
+        std::cout << "hand is empty.\n";
         return;
     }
     std::cout << card_to_string(first_card) << " and " << card_to_string(second_card) << '\n';
 }
 
-int is_better(pair_t first, pair_t second) {
+int is_better(hand_t first, hand_t second) {
     // first has 2
     if (static_cast<int>(first.first_card.rank) * static_cast<int>(first.second_card.rank) == 0) {
         //second has 2

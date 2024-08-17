@@ -3,7 +3,7 @@
 
 #include <vector>
 #include "card.h"
-#include "pair.h"
+#include "hand.h"
 
 
 class deck_t {
@@ -15,10 +15,10 @@ class deck_t {
         void print_deck();
         void print_deck_count();
         void shuffle();
-        card_t remove_card();
-        pair_t remove_pair();
+        card_t draw_card();
+        hand_t draw_two_cards();
         void add_card(card_t card);
-        void add_pair(pair_t pair);
+        void add_two_cards(hand_t hand);
 
     private:
         int deck_count=0;

@@ -2,12 +2,8 @@
 #define poker_game
 
 #include "deck.h"
-#include "pair.h"
+#include "hand.h"
 #include "player.h"
-
-
-void init_game();
-void game_loop();
 
 class game_t {
     public:
@@ -15,11 +11,15 @@ class game_t {
 
         deck_t InDeck;
         deck_t OutDeck;
-        pair_t hand;
+        hand_t hand;
         std::vector<player_t> players;
 
         void print_player_count();
-
+        void print_player_names();
+        void init_game();
+        int game_loop();
+        void add_player(std::string name);
+        std::vector<player_t>::iterator it;
 };
 
 

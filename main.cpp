@@ -4,12 +4,13 @@
 
 
 int main() {
-    init_game();
+    game_t game;
+    game.init_game();
 
 
     while(true) {
-        game_loop();
-        break;
+        int ret = game.game_loop();
+        if (ret == 0) {break;}
     }
     return 0;
 }

@@ -7,7 +7,7 @@
 
 #include "card.h"
 #include "deck.h"
-#include "pair.h"
+#include "hand.h"
 
 void deck_t::fill_deck() {
     for (char i=0; i<static_cast<int>(suit_t::len); i++) {
@@ -44,18 +44,18 @@ void deck_t::shuffle() {
     std::shuffle(deck.begin(), deck.end(), rng);
 }
 
-card_t deck_t::remove_card() {
+card_t deck_t::draw_card() {
     card_t card = deck.back(); //seg fault
     deck.pop_back();
     deck_count--;
     return card;
 }
 
-pair_t deck_t::remove_pair() {
-    card_t a = remove_card();
-    card_t b = remove_card();
-    pair_t pair;
-    pair.fill_pair(a, b);
+hand_t deck_t::draw_two_cards() {
+    card_t a = draw_card();
+    card_t b = draw_card();
+    hand_t pair;
+    pair.fill_hand(a, b);
     return pair;
 }
 
@@ -64,7 +64,7 @@ void deck_t::add_card(card_t card) {
     deck_count++;
 }
 
-void deck_t::add_pair(pair_t pair) {
+void deck_t::add_two_cards(hand_t hand) {
     add_card(pair.second_card);
     add_card(pair.second_card);
     

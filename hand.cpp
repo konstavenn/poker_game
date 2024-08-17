@@ -1,119 +1,68 @@
 #include <iostream>
-
 #include "card.h"
 #include "hand.h"
-
-
-
-
 
 void hand_t::fill_hand(card_t first, card_t second) {
     first_card = first;
     second_card = second;
     hand_not_empty = true;
 }
+
 void hand_t::empty_hand() {
-    card_t first_card;
-    card_t second_card;
+    first_card = card_t();
+    second_card = card_t();
     hand_not_empty = false;
 }
+
 void hand_t::print_hand() {
     if (!hand_not_empty) {
-        std::cout << "hand is empty.\n";
+        std::cout << "Hand is empty.\n";
         return;
     }
     std::cout << card_to_string(first_card) << " and " << card_to_string(second_card) << '\n';
 }
 
+// TODO: replace_first, replace_second, and replace_both methods 
+
 int is_better(hand_t first, hand_t second) {
-    // first has 2
-    if (static_cast<int>(first.first_card.rank) * static_cast<int>(first.second_card.rank) == 0) {
-        //second has 2
-        if (static_cast<int>(second.first_card.rank) * static_cast<int>(second.second_card.rank) == 0) {
-            //first has 7-2
-            if (static_cast<int>(first.first_card.rank) + static_cast<int>(first.second_card.rank) == 5) {
-                //second has 7-2
-                if (static_cast<int>(second.first_card.rank) + static_cast<int>(second.second_card.rank) == 5) {
-                    return 0;
-                }
-                //only first has 7-2
-                return 1;   
-            }
-            //only second has 7-2
-            if (static_cast<int>(second.first_card.rank) + static_cast<int>(second.second_card.rank) == 5) {
-                return -1;
-            }
+    // Helper function to check if a hand has a 2 (joker)
+    auto has_two = [](const hand_t& h) {
+        return static_cast<int>(h.first_card.rank) == 0 || static_cast<int>(h.second_card.rank) == 0;
+    };
 
-            //first has bigger 2x
-            if (static_cast<int>(first.first_card.rank) + static_cast<int>(first.second_card.rank) > static_cast<int>(second.first_card.rank) + static_cast<int>(second.second_card.rank)) {
-                return 1;
-            }
-            //second has bigger 2x
-            else if (static_cast<int>(first.first_card.rank) + static_cast<int>(first.second_card.rank) < static_cast<int>(second.first_card.rank) + static_cast<int>(second.second_card.rank)) {
-                return -1;
-            }
-            //same 2x hand
-            return 0;
+    // Helper function to get the sum of ranks in a hand
+    auto rank_sum = [](const hand_t& h) {
+        return static_cast<int>(h.first_card.rank) + static_cast<int>(h.second_card.rank);
+    };
+
+    // Check for hands with 2 (joker)
+    if (has_two(first)) {
+        if (has_two(second)) {
+            // Both hands have a 2
+            if (rank_sum(first) == 5 && rank_sum(second) == 5) return 0;  // Both have 7-2
+            if (rank_sum(first) == 5) return 1;  // Only first has 7-2
+            if (rank_sum(second) == 5) return -1;  // Only second has 7-2
+            return rank_sum(first) > rank_sum(second) ? 1 : (rank_sum(first) < rank_sum(second) ? -1 : 0);
         }
-        //only first has 7-2
-        return 1;
+        return 1;  // Only first has a 2
     }
+    if (has_two(second)) return -1;  // Only second has a 2
 
-    //second has 2, first doesnt
-    if (static_cast<int>(second.first_card.rank) * static_cast<int>(second.second_card.rank) == 0) {
-        return -1;
+    // Check for pairs
+    bool first_pair = first.first_card.rank == first.second_card.rank;
+    bool second_pair = second.first_card.rank == second.second_card.rank;
+    if (first_pair && second_pair) {
+        return static_cast<int>(first.first_card.rank) - static_cast<int>(second.first_card.rank);
     }
-    
-    //noone has 2
-    
-    // first has pair
-    if (static_cast<int>(first.first_card.rank) == static_cast<int>(first.second_card.rank)) {
-        // second has pair
-        if (static_cast<int>(second.first_card.rank) == static_cast<int>(second.second_card.rank)) {
-            //first has bigger pair
-            if (static_cast<int>(first.first_card.rank) > static_cast<int>(second.first_card.rank)) {
-                return 1;
-            }
-            //second has bigger pair
-            else if (static_cast<int>(first.first_card.rank) < static_cast<int>(second.first_card.rank))
-            {
-                return -1;
-            }
-            //both have same pair
-            return 0;
-            
-        }
-        //first has bigger pair
-        return 1;
-    }
+    if (first_pair) return 1;
+    if (second_pair) return -1;
 
-    // second has pair, first doesnt
-    if (static_cast<int>(second.first_card.rank) == static_cast<int>(second.second_card.rank)) {
-        return -1;
-    }
+    // Compare high cards, then low cards
+    int first_high = std::max(static_cast<int>(first.first_card.rank), static_cast<int>(first.second_card.rank));
+    int second_high = std::max(static_cast<int>(second.first_card.rank), static_cast<int>(second.second_card.rank));
+    if (first_high != second_high) return first_high - second_high;
 
-    //noone has 2 or pair
-
-    //compare bigger card
-    int bigger_first = (static_cast<int>(first.first_card.rank) > static_cast<int>(first.second_card.rank)) ? static_cast<int>(first.first_card.rank) : static_cast<int>(first.second_card.rank);
-    int bigger_second = (static_cast<int>(second.first_card.rank) > static_cast<int>(second.second_card.rank)) ? static_cast<int>(second.first_card.rank) : static_cast<int>(second.second_card.rank);
-    if (bigger_first > bigger_second) {
-        return 1;
-    }
-    if (bigger_first < bigger_second) {
-        return -1;
-    }
-
-    //compare smaller card
-    int smaller_first = (static_cast<int>(first.first_card.rank) < static_cast<int>(first.second_card.rank)) ? static_cast<int>(first.first_card.rank) : static_cast<int>(first.second_card.rank);
-    int smaller_second = (static_cast<int>(second.first_card.rank) < static_cast<int>(second.second_card.rank)) ? static_cast<int>(second.first_card.rank) : static_cast<int>(second.second_card.rank);
-    if (smaller_first > smaller_second) {
-        return 1;
-    }
-    if (smaller_first < smaller_second) {
-        return -1;
-    }
-
-    //same hand
-    return 0;
+    int first_low = std::min(static_cast<int>(first.first_card.rank), static_cast<int>(first.second_card.rank));
+    int second_low = std::min(static_cast<int>(second.first_card.rank), static_cast<int>(second.second_card.rank));
+    return first_low - second_low;
 }

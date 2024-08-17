@@ -1,57 +1,61 @@
-
 #include <iostream>
-#include <chrono>
-#include <thread>
 #include <algorithm>
 #include <random>
-
 #include "card.h"
 #include "deck.h"
 #include "hand.h"
 
 void deck_t::fill_deck() {
-    for (char i=0; i<static_cast<int>(suit_t::len); i++) {
-        for (char j=0; j<static_cast<int>(rank_t::len); j++) {
-            static card_t kortti;
-            kortti.rank = static_cast<rank_t>(j);
-            kortti.suit = static_cast<suit_t>(i);
-            deck.push_back(kortti);
+    for (int i = 0; i < static_cast<int>(suit_t::len); i++) {
+        for (int j = 0; j < static_cast<int>(rank_t::len); j++) {
+            card_t card;
+            card.rank = static_cast<rank_t>(j);
+            card.suit = static_cast<suit_t>(i);
+            deck.push_back(card);
             deck_count++;
-            //std::cout << card_to_string(kortti) << '\n';
         }
     }
-    //std::cout << DeckCount << " cards in deck.\n";
-};
+}
 
 void deck_t::empty_deck() {
     deck.clear();
+    deck_count = 0;
 }
 
 void deck_t::print_deck() {
-    for (std::vector<card_t>::iterator it = deck.begin() ; it != deck.end(); ++it)
-        std::cout << card_to_string(*it) << '\n';
-    if (deck.size() == 0) {
+    if (deck.empty()) {
         std::cout << "Deck is empty.\n";
+        return;
+    }
+    for (const auto& card : deck) {
+        std::cout << card_to_string(card) << '\n';
     }
 }
 
 void deck_t::print_deck_count() {
     std::cout << deck_count << " cards in deck.\n";
 }
+
 void deck_t::shuffle() {
-    auto rd = std::random_device {}; 
-    auto rng = std::default_random_engine { rd() };
-    std::shuffle(deck.begin(), deck.end(), rng);
+    std::random_device rd;
+    std::mt19937 g(rd());
+    std::shuffle(deck.begin(), deck.end(), g);
 }
 
 card_t deck_t::draw_card() {
-    card_t card = deck.back(); //seg fault
+    if (deck.empty()) {
+        throw std::runtime_error("Cannot draw from an empty deck");
+    }
+    card_t card = deck.back();
     deck.pop_back();
     deck_count--;
     return card;
 }
 
 hand_t deck_t::draw_two_cards() {
+    if (deck_count < 2) {
+        throw std::runtime_error("Not enough cards in the deck to draw two");
+    }
     card_t a = draw_card();
     card_t b = draw_card();
     hand_t pair;
@@ -65,7 +69,6 @@ void deck_t::add_card(card_t card) {
 }
 
 void deck_t::add_two_cards(hand_t hand) {
-    add_card(pair.second_card);
-    add_card(pair.second_card);
-    
+    add_card(hand.second_card);
+    add_card(hand.first_card);
 }
